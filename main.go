@@ -2,12 +2,13 @@ package main
 
 import (
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/joho/godotenv"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 )
 
 var db *sql.DB
@@ -22,8 +23,12 @@ func initDB() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	mysql := os.Getenv("MYSQL_CONN_STRING")
-	db, err = sql.Open("mysql", mysql)
+	db, err = sql.Open(
+		os.Getenv("DB_CONN"),
+		os.Getenv("DB_USERNAME")+":"+
+			os.Getenv("DB_PASSWORD")+"@tcp(127.0.0.1:"+
+			os.Getenv("DB_PORT")+")/"+
+			os.Getenv("DB_NAME")+"?parseTime=True&loc=Local")
 
 	if err != nil {
 		log.Fatal(err)
